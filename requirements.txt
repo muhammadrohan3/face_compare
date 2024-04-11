@@ -5,3 +5,4 @@ face_recognition @ git+https://github.com/thetoby9944/face_recognition
 requests==2.31.0
 cmake==3.29.0.1
 Werkzeug==2.2.3
+waitress==3.0.0
