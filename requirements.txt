@@ -10,3 +10,4 @@ gunicorn==21.2.0
 keras
 tensorflow-cpu
 scikit-learn
+Pillow
