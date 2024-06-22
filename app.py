@@ -10,6 +10,7 @@ from keras.preprocessing import image
 from keras.applications.vgg16 import VGG16, preprocess_input
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
+import os
 from io import BytesIO
 
 def load_image_from_url(image_url):
@@ -117,4 +118,5 @@ def compareProducts():
 if __name__ == '__main__':
     print("Starting the server")
     from waitress import serve
-    serve(app, host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    serve(app, host="0.0.0.0", port= port)
