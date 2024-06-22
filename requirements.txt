@@ -8,4 +8,4 @@ Werkzeug==2.2.3
 waitress==3.0.0
 gunicorn==21.2.0
 tensorflow==2.12.1
-keras==2.12.1
+keras==2.13.1
