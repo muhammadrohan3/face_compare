@@ -8,5 +8,5 @@ Werkzeug==2.2.3
 waitress==3.0.0
 gunicorn==21.2.0
 keras
-tensorflow
+tflite-runtime
 scikit-learn
