@@ -6,7 +6,7 @@ import requests
 from io import BytesIO
 import face_recognition
 from PIL import Image
-from tensorflow.keras.preprocessing import image
+from keras.preprocessing import image
 from keras.applications.vgg16 import VGG16, preprocess_input
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
