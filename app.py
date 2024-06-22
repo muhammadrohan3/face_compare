@@ -5,6 +5,12 @@ import numpy as np
 import requests
 from io import BytesIO
 import face_recognition
+from PIL import Image
+from tensorflow.keras.preprocessing import image
+from keras.applications.vgg16 import VGG16, preprocess_input
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.decomposition import PCA
+from io import BytesIO
 
 def load_image_from_url(image_url):
     try:
@@ -54,7 +60,32 @@ def compare_images(image1_url, image2_url):
 # Create an instance of the Flask class
 app = Flask(__name__)
 
+def load_image(image_url):
+    response = requests.get(image_url)
+    response.raise_for_status()
+    input_image = Image.open(BytesIO(response.content))
+    resized_image = input_image.resize((224, 224))
+    return resized_image
 
+# Extract image embeddings using VGG16
+def get_image_embeddings(object_image):
+    image_array = np.expand_dims(image.img_to_array(object_image), axis=0)
+    image_array = preprocess_input(image_array)  # Normalize the image array
+    image_embedding = vgg16.predict(image_array)
+    return image_embedding
+
+# Calculate similarity score between two images
+def get_similarity_score(first_image_url, second_image_url, n_components = 2):
+    first_image = load_image(first_image_url)
+    second_image = load_image(second_image_url)
+
+    first_image_vector = get_image_embeddings(first_image)
+    second_image_vector = get_image_embeddings(second_image)
+    
+    similarity_score = cosine_similarity(first_image_vector, second_image_vector).reshape(1,)
+    return similarity_score
+
+vgg16 = VGG16(weights='imagenet', include_top=False, pooling='max', input_shape=(224, 224, 3))
 
 # Define a route and a function to handle requests to that route
 @app.route('/')
@@ -68,9 +99,21 @@ def compareImages():
     image1_url = data.get('image1_url')
     image2_url = data.get('image2_url')
     result = compare_images(image1_url, image2_url)
-    print(result)
+    print("This is result",result)
     return jsonify(result)
 # Run the application
+@app.route("/compare_products", methods=['POST'])
+def compareProducts():
+    data = request.get_json()
+    image1_url = data.get('image_1')
+    image2_url = data.get('image_2')
+    print("this is image1_url",image1_url)
+    similarity_score = get_similarity_score(image1_url, image2_url)
+    result = {"similarity" : str(similarity_score[0])}
+    print("this is result ++?",result)
+    return jsonify(result)
+
+
 if __name__ == '__main__':
     print("Starting the server")
     from waitress import serve
